@@ -105,7 +105,7 @@ int main() {
     else
         printf("Person not found.\n");
 
-    printf("\nDeleting 'Perić'...\n");
+
     deleteBySurname(&head, "Perić");
 
     printList(&head);
