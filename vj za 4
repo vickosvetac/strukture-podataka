@@ -1,0 +1,27 @@
+typedef struct* _poly Position;
+td struct _poly{
+  int coef;
+  int pow;
+  position mext;
+}poly;
+
+poly head={.coef=0,.power=0,.next=NULL}
+poly
+(za svaki polinom zasebno datoteku)
+poly firstP=head
+poly secondP=head;
+2)otvori dat
+pohrani podatke
+zatvori dat
+spremljenje podatk prije izalska oslobodi u emoriji (free buffer)
+3)alociraj memoriju za neki novi el
+previous=firstP;
+p=previous->next;
+lista prazna?(p==null)
+newEl->next=prev->next;
+prev->next=newEl;
+p->pow>power
+p=p->next;
+prev=prev->next
+nema globalnih varijabli i voida
+
