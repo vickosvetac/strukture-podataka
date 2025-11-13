@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int coeff;
+    int pow;
+    struct Node* next;
+} Node;
+
+//prototipi
+Node* insertSorted(Node* head, int coeff, int pow);
+Node* createPolynomial(FILE* fp);
+Node* addPolynomials(Node* p1, Node* p2);
+Node* multiplyPolynomials(Node* p1, Node* p2);
+void displayPolynomial(Node* head);
+void freeList(Node* head);
+
+//insertnode
+Node* insertSorted(Node* head, int coeff, int pow) {
+    if (coeff == 0) return head;
+
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->coeff = coeff;
+    newNode->pow = pow;
+    newNode->next = NULL;
+
+ 
+    if (head == NULL || pow > head->pow) {
+        newNode->next = head;
+        return newNode;
+    }
+
+    Node* curr = head;
+    Node* prev = NULL;
+
+ 
+    while (curr && pow < curr->pow) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // Merge terms with the same power
+    if (curr && curr->pow == pow) {
+        curr->coeff += coeff;
+        free(newNode);
+        return head;
+    }
+
+    // Insert u sredinu
+    newNode->next = curr;
+    if (prev) prev->next = newNode;
+
+    return head;
+}
+
+// polinom iz filea
+Node* createPolynomial(FILE* fp) {
+    Node* head = NULL;
+    int coeff, pow;
+
+    while (fscanf(fp, "%d %d", &coeff, &pow) == 2) {
+        head = insertSorted(head, coeff, pow);
+    }
+
+    return head;
+}
+
+//dodavanje 2 polinoma
+Node* addPolynomials(Node* p1, Node* p2) {
+    Node* result = NULL;
+
+    while (p1 && p2) {
+        if (p1->pow > p2->pow) {
+            result = insertSorted(result, p1->coeff, p1->pow);
+            p1 = p1->next;
+        } else if (p1->pow < p2->pow) {
+            result = insertSorted(result, p2->coeff, p2->pow);
+            p2 = p2->next;
+        } else {
+            result = insertSorted(result, p1->coeff + p2->coeff, p1->pow);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+
+    // dodavanje nodesa
+    while (p1) {
+        result = insertSorted(result, p1->coeff, p1->pow);
+        p1 = p1->next;
+    }
+
+    while (p2) {
+        result = insertSorted(result, p2->coeff, p2->pow);
+        p2 = p2->next;
+    }
+
+    return result;
+}
+
+//mnozenje polinoma
+Node* multiplyPolynomials(Node* p1, Node* p2) {
+    Node* result = NULL;
+
+    for (Node* a = p1; a != NULL; a = a->next) {
+        for (Node* b = p2; b != NULL; b = b->next) {
+            int coeff = a->coeff * b->coeff;
+            int pow = a->pow + b->pow;
+            result = insertSorted(result, coeff, pow);
+        }
+    }
+
+    return result;
+}
+
+//prikaz polinoma
+void displayPolynomial(Node* head) {
+    if (!head) {
+        printf("0\n");
+        return;
+    }
+
+    Node* temp = head;
+    while (temp) {
+        printf("%dx^%d", temp->coeff, temp->pow);
+        temp = temp->next;
+        if (temp)
+            printf(" + ");
+    }
+    printf("\n");
+}
+
+//freeanje liste
+void freeList(Node* head) {
+    Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        temp->next = NULL; 
+        free(temp);
+    }
+}
+
+int main() {
+    FILE* fp = fopen("polynomials.txt", "r");
+    if (!fp) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    // citanje 2 polinoma
+    Node* poly1 = createPolynomial(fp);
+    Node* poly2 = createPolynomial(fp);
+    fclose(fp);
+
+    printf("Polynomial 1: ");
+    displayPolynomial(poly1);
+
+    printf("Polynomial 2: ");
+    displayPolynomial(poly2);
+
+    // dodavanje i mnozenje
+    Node* sum = addPolynomials(poly1, poly2);
+    Node* product = multiplyPolynomials(poly1, poly2);
+
+    printf("\nSum: ");
+    displayPolynomial(sum);
+
+    printf("Product: ");
+    displayPolynomial(product);
+
+    //freeanje memorije
+    freeList(poly1);
+    freeList(poly2);
+    freeList(sum);
+    freeList(product);
+
+    return 0;
+}
