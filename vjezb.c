@@ -109,7 +109,7 @@ Receipt* load_all_receipts(char *list_file) {
 }
 
 //money and amount of items in range
-void query(Receipt *head) {
+int query(Receipt *head) {
     char item_name[100];
     char from[11], to[11];
 
@@ -145,10 +145,11 @@ void query(Receipt *head) {
     printf("\nRESULT:\n");
     printf("Total quantity purchased: %d\n", total_quantity);
     printf("Total money spent: %.2f\n", total_money);
+    return 0;
 }
 
 //free memory
-void free_all(Receipt *head) {
+int free_all(Receipt *head) {
     while (head) {
         Receipt *temp = head;
         head = head->next;
@@ -162,6 +163,7 @@ void free_all(Receipt *head) {
 
         free(temp);
     }
+    return 0;
 }
 
 //main
