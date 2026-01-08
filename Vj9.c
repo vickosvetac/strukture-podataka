@@ -41,10 +41,7 @@ int inorderToFile(Position root, FILE* fp) {
     return 0;
 }
 
-/*
- b) replace: svaki čvor zamijeni sumom podstabala
- funkcija vraća sumu elemenata ispod čvora
-*/
+
 
 int replace(Position root) {
     if (root == NULL)
@@ -65,24 +62,24 @@ int main() {
     int i;
     Position root = NULL;
 
-    /* a) iz niza u stablo */
+  
     for (i = 0; i < n; i++)
         root = insert(root, niz[i]);
 
-    /* zapis nakon a) */
+    
     FILE* f1 = fopen("inorder_a.txt", "w");
     inorderToFile(root, f1);
     fclose(f1);
 
-    /* b) zamjena vrijednosti */
+   
     replace(root);
 
-    /* zapis nakon b) */
+
     FILE* f2 = fopen("inorder_b.txt", "w");
     inorderToFile(root, f2);
     fclose(f2);
 
-    /* c) random verzija */
+
     Position root2 = NULL;
     srand((unsigned)time(NULL));
 
