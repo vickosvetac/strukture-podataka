@@ -141,6 +141,6 @@ int main() {
         searchCities(p->root, minPop);
     else
         printf("Drzava ne postoji.\n");
-
+    freeCountries(&head);
     return 0;
 }
